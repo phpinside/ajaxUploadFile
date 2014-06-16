@@ -8,5 +8,6 @@
 + 采用 XMLHttpRequest Level 2 的新特性
 
 
+
  
 [四脚猫出品](http://www.sijiaomao.com "四脚猫")
