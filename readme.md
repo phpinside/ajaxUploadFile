@@ -1,3 +1,7 @@
-����html5��ajax����ʵ�ֵĳ����ļ��ϴ�demo��
+# 采用html5，XMLHttpRequest Level 2 （ajax）技术实现的超大文件上传demo。
  
-ajax�ļ��ֿ��ϴ����Ͷϵ���������������
++ demo0 到 demo7，逐渐加强
++ ajax文件分块上传，本地把文件分块
++ 支持断点续传，失败后能继续上传
++ 上传有进度显示
++ 采用bootstrap模版制作
