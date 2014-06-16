@@ -6,3 +6,6 @@
 + 上传有进度显示，可以实现暂停上传，继续上传等功能
 + 采用bootstrap模版制作
 + 采用 XMLHttpRequest Level 2 的新特性
+
+
+[1]: http://www.sijiaomao.com/        "四脚猫出品" 
