@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ajax文件上传</title>
+</head>
+<body>
+<p>最简单的demo，演示ajax上传文件。一次性发送整个文件给服务端。由于没有绑定上传成功事件，请直接查看uploads目录。</p>
+<form >
+<input type="file" id="file">
+</form>
+<script src="jquery-1.11.0.js"></script>
+<script>
+$('#file').change(function(){
+	var files = this.files
+	
+	// 演示使用，仅使用1个文件
+	var file = files[0]
+	
+	console.dir(file);
+	
+	var data = new FormData()
+	data.append("name", encodeURIComponent(file.name))
+	// 一次性发送整个文件给服务端
+	data.append("file", file)
+	
+	console.log(data);
+	var xhr = new XMLHttpRequest()
+	xhr.open("post", 'upload.php')
+	xhr.send(data)
+	console.log(xhr);
+})
+</script>
+</body>
+</html>

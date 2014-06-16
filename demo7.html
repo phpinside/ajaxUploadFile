@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ajax文件上传demo</title>
+<meta name="description" content="四脚猫高级PHP培训[www.sijiaomao.com] - $.ajax文件分块上传，和断点续传，及进度条演示。">
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+	<div class="row">
+	  <div class="col-md-8">
+		<h3>$.ajax文件分块上传，和断点续传，及进度条</h3>
+		<div class="alert alert-success"><p>在 demo6.html 的基础上，增加进度条等显示效果。</p></div>
+		<form>
+		  <div class="form-group">
+			<label for="exampleInputFile"></label>
+			<input type="file" id="file">
+			<p class="help-block">请选择一个要上传的文件。</p>
+		  </div>
+		  <button name="start" type="button" class="btn btn-success" disabled>开始上传</button>
+		  <button name="pause" type="button" class="btn btn-default hide">暂停</button>
+		</form>
+		<br>
+		<br>
+		
+		<div class="progress progress-striped hide">
+		  <div class="progress-bar" style="width: 0%">
+			<span class="sr-only"></span>
+		  </div>
+		</div>
+	  </div>
+	  <div class="col-md-4"></div>
+	</div>
+</div>
+
+<script src="jquery-1.11.0.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script>
+~function($){
+var file
+
+// 每次上传文件的一段，单位：字节
+// 推荐使用文本文件进行演示
+var preUploadSize = 1024 * 2;
+
+// 文件的起始上传位置
+var start = 0
+
+// 上传暂停
+var pause = false
+
+
+
+$('#file').change(function() {
+	var files = this.files
+	file = files[0]
+	$('.help-block').text('文件 '+file.name+' 的长度：'+file.size+' 字节')
+	$('button[name=start]').prop('disabled', false)
+})
+
+$(document).on('click', 'button[name=start]', function(){
+	var url = 'filesize.php?filename=' + encodeURIComponent(file.name)
+	$.get(url, function(json) {
+		//console.log(data)
+		start = json.data[file.name.replace(/\.\w+$/, '')]
+		console.log(['start', start])
+		
+		if ( start < file.size ) {
+			showprogress(start, file.size)
+			upload(file)
+		} else {
+			alert('上传结束')
+			$('button[name=pause], .progress').addClass('hide')
+		}
+	}, 'json')
+	
+	$('button[name=pause], .progress').removeClass('hide')
+})
+$(document).on('click', 'button[name=pause]', function() {
+	var o = $(this)
+	if ( pause ) {
+		o.text('暂停')
+		upload(file)
+	} else {
+		o.text('继续')
+	}
+	pause = !pause
+})
+
+function upload(file) {
+	var data = new FormData()
+	data.append("name", encodeURIComponent(file.name))
+	data.append("file", file.slice(start, start + preUploadSize))
+	data.append("start", start)
+	
+    $.ajax({
+        type: 'POST',
+        url: 'upload.php',
+        data: data,
+		
+        // 设置 false 以使用文件上传的 Content-Type
+		// 如 Content-Type:multipart/form-data; boundary=----WebKitFormBoundarykdtBZ0dnFQOWcXu3
+        contentType: false,
+		
+        // 避开jQuery对 data 对象的默认处理
+        processData: false,
+		
+	// 设置 xhr 对象，增加 onprogress 事件
+	xhr: function() {
+		var xhr = $.ajaxSettings.xhr();
+		xhr.upload.onprogress = function(e) {
+			showprogress(start + e.loaded, file.size)
+		}
+		return xhr
+	}
+	
+    }).then(function() {
+		start += preUploadSize
+		
+		if (start < file.size) {
+			// 进行下一段上传
+			if (!pause) {
+				// 为了演示，每次延时3秒钟
+				setTimeout(function(){upload(file)}, 3000)
+			}
+		} else {
+			$('button[name=pause], .progress-bar').addClass('hide')
+			alert('上传结束')
+		}
+    }, function() {
+        alert('上传错误')
+    })
+}
+
+function showprogress(start, filesize) {
+	$('.progress-bar').width(start/filesize * 100 + '%')
+}
+}(jQuery)
+</script>
+</body>
+</html>
+</html>

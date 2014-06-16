@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ajax文件上传文件的一部分</title>
+</head>
+<body>
+<p>在 demo1.html 的基础上，改为上传文件的一部分。注意：此demo仅实现上传第一部分。</p>
+<form action="upload.php">
+<input type="file" id="file">
+</form>
+<script src="jquery-1.11.0.js"></script>
+<script>
+~function($){
+// 每次上传文件的一段，单位：字节
+var preUploadSize = 1024 * 2
+
+var start = 0
+var xhr = new XMLHttpRequest()
+
+var total = 0
+xhr.upload.onprogress = function(e) {
+	total += e.loaded
+	document.title = '上传 ' + total + ' 字节'
+}
+
+$('#file').change(function() {
+	var files = this.files
+	var file = files[0]
+	
+	var data = new FormData()
+	data.append("name", encodeURIComponent(file.name))
+	
+	// 在 demo1.html 的基础上增加一个进度显示
+	data.append("file", file.slice(start, start + preUploadSize))
+	
+	xhr.open("post", 'upload.php')
+	var total = 0
+	xhr.upload.onprogress = function(e) {
+		total += e.loaded
+		document.title = '上传 ' + total + ' 字节'
+	}
+	xhr.send(data)
+})
+}(jQuery);
+
+
+</script>
+</body>
+</html>
