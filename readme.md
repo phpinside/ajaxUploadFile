@@ -1,4 +1,4 @@
-# 采用html5，Ajax ，JQuery ，Bootstrap  技术实现的超大文件上传demo。
+## 采用html5，Ajax ，JQuery ，Bootstrap  技术实现的超大文件上传demo。
  
 + demo0 到 demo7，逐渐加强
 + ajax文件分块上传，本地把文件分块
